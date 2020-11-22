@@ -12,10 +12,24 @@ jobs:
         root: ~/
         paths:
           - output.txt 
+  # JOB to attach file from previous job
+  read_file_in_other_job:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: cat ~/output.txt
+
   
 workflows:
-  # Name the workflow "welcome"
+  # Name the workflow "my_workflow"
   my_workflow:
     # Run the jobs listed above
     jobs:
+      # RUN job add file
       - add_file
+      # RUN job read_file_in_other_job after JOB add_file
+      - read_file_in_other_job:
+          requires:
+            - add_file
